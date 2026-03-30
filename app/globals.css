@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --void: #04020e;
+  --deep: #0a0618;
+  --nebula: #130d24;
+  --purple-dim: #2a1f4a;
+  --purple-mid: #4a3580;
+  --purple-bright: #7b5ea8;
+  --purple-light: #c4b5f7;
+  --purple-glow: #9d7fe8;
+  --star: #f0ebff;
+  --muted: #8b7db5;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--void);
+  color: var(--star);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--purple-mid);
+  color: var(--star);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--void);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--purple-dim);
+  border-radius: 2px;
+}
+
+.font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #c4b5f7 0%, #9d7fe8 50%, #7b5ea8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .border-glow {
+    border: 1px solid rgba(155, 127, 232, 0.3);
+    box-shadow: 0 0 20px rgba(155, 127, 232, 0.05);
+  }
+  .card-dark {
+    background: rgba(19, 13, 36, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(42, 31, 74, 0.6);
+  }
+}
+
+.sp:hover{border-color:rgba(123,94,168,0.6)!important;color:#c4b5f7!important;}
+.fc:hover{background:rgba(15,9,32,0.9)!important;}
+.bp:hover{background:#8b6db8!important;transform:translateY(-1px);}
+.bs:hover{border-color:rgba(123,94,168,0.5)!important;color:#c4b5f7!important;}
+.nl:hover{color:#c4b5f7!important;}
+.fu{animation:fadeUp 0.3s ease forwards;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+.sp:hover{border-color:rgba(123,94,168,0.6)!important;color:#c4b5f7!important;}
+.fc:hover{background:rgba(15,9,32,0.9)!important;}
+.bp:hover{background:#8b6db8!important;transform:translateY(-1px);}
+.bs:hover{border-color:rgba(123,94,168,0.5)!important;color:#c4b5f7!important;}
+.nl:hover{color:#c4b5f7!important;}
+.fu{animation:fadeUp 0.3s ease forwards;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
