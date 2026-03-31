@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { createBrowserClient } from '@supabase/ssr'
 import type { User } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
 
 interface NavbarProps {
   lang: 'tr' | 'en'
@@ -21,7 +21,14 @@ export default function Navbar({ lang, setLang }: NavbarProps) {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null))
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null)
+    })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
@@ -31,11 +38,14 @@ export default function Navbar({ lang, setLang }: NavbarProps) {
   }, [])
 
   const handleLogout = async () => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
     await supabase.auth.signOut()
     window.location.href = '/'
   }
 
-  // Derive display name: prefer full_name metadata, fall back to email prefix
   const displayName = user?.user_metadata?.name
     || user?.user_metadata?.full_name
     || user?.email?.split('@')[0]
@@ -44,7 +54,7 @@ export default function Navbar({ lang, setLang }: NavbarProps) {
   const avatarUrl = user?.user_metadata?.avatar_url as string | undefined
 
   return (
-    <nav className="relative z-50 flex justify-between items-center px-6 md:px-10 py-5 border-b border-purple-dim/40">
+    <nav className="relative z-50 flex justify-between items-center px-6 md:px-10 py-5 border-b border-purple-dim/40 backdrop-blur-sm">
       <Link href="/" className="font-display text-2xl tracking-[0.2em] text-purple-light no-underline hover:opacity-80 transition-opacity">
         PHOEBIX
       </Link>
@@ -67,17 +77,14 @@ export default function Navbar({ lang, setLang }: NavbarProps) {
 
         {user ? (
           <div className="flex items-center gap-2">
-            {/* Avatar or initial */}
             <div className="w-7 h-7 rounded-full overflow-hidden border border-purple-dim/60 flex-shrink-0 flex items-center justify-center bg-purple-mid/30 text-purple-light text-xs font-medium">
               {avatarUrl
                 ? <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 : displayName.charAt(0).toUpperCase()}
             </div>
-            {/* Email/name label */}
             <span className="hidden lg:block text-xs text-muted max-w-[120px] truncate">
               {displayName}
             </span>
-            {/* Logout */}
             <button
               onClick={handleLogout}
               className="text-xs px-3 py-1.5 border border-purple-dim/60 rounded-full text-muted hover:text-purple-light hover:border-purple-bright/40 transition-all"

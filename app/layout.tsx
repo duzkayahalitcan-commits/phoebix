@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import NavbarWrapper from '@/components/NavbarWrapper'
 
 export const metadata: Metadata = {
   title: 'Phoebix — Yıldızların Diliyle',
@@ -22,7 +23,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr" suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        <NavbarWrapper />
+        {children}
+      </body>
     </html>
   )
 }
