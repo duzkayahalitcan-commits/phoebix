@@ -227,6 +227,324 @@ function arcPath(cx: number, cy: number, r: number, startRad: number, endRad: nu
   return `A ${r} ${r} 0 0 ${clockwise ? 1 : 0} ${x2} ${y2}`
 }
 
+// ── 70-Year Timeline ────────────────────────────────────────────────────────
+
+const YEAR_THEMES_TR = [
+  'Doğum enerjisi','İlk adımlar','Büyüme & merak','Dil & bağlantı',
+  'Köklerin güçlenmesi','Cesaret & keşif','Toplumsal bilinç','İlk dönüşüm',
+  'Öğrenme çağı','Hedefler belirir','Sorumluluk gelişir','Hayal gücü açılır',
+  'Jüpiter dönüşü','Kimlik arayışı','Satürn karşıtlığı','Değişim rüzgarı',
+  'Özgürlük çağrısı','Vizyon genişler','Yetişkinliğe adım','Düğüm dönüşü',
+  'Büyük kararlar','Uranüs kare','Tutku & ihtiras','Denge arayışı',
+  'Jüpiter dönüşü','Derinleşme','Birikim dönemi','Kader noktası',
+  'Olgunlaşma','Satürn dönüşü','Yeni temel','Büyüme ivmesi',
+  'Sorumluluklar','Vizyon netleşir','Dönüşüm başlar','Güç kazanımı',
+  'Jüpiter dönüşü','Kriz & atılım','Satürn trine','Derin sorgulama',
+  'Köklü değişim','İç hesaplaşma','Uranüs karşıtlığı','Dönüşüm tamamlanır',
+  'Chiron dönüşü','Bilgelik kapısı','Öncelikler değişir','Ruhsal derinlik',
+  'Jüpiter dönüşü','Olgunluk zirvesi','Satürn karşıtlığı','Güçlü sezgiler',
+  'Miras & ürün','Yeni pencereler','Ruhsal yolculuk','Özgürlük & genişlik',
+  'Ufuk açılımı','Büyük sorgulama','İkinci Satürn dönüşü','Bilgelik dönemi',
+  'Jüpiter dönüşü','Deneyimin meyvesi','Yeni ufuklar','Uranüs kare',
+  'Ruhsal sentez','Köklü huzur','Manevi olgunluk','Nesiller arası köprü',
+  'Derin dinginlik','Evrensel bağlantı','Büyük döngü',
+]
+
+const YEAR_THEMES_EN = [
+  'Birth energy','First steps','Growth & curiosity','Language & connection',
+  'Roots strengthen','Courage & discovery','Social awareness','First transformation',
+  'Age of learning','Goals emerge','Responsibility grows','Imagination opens',
+  'Jupiter return','Identity quest','Saturn opposition','Winds of change',
+  'Call to freedom','Vision expands','Step to adulthood','Nodal return',
+  'Major decisions','Uranus square','Passion & ambition','Seeking balance',
+  'Jupiter return','Deepening','Accumulation phase','Fated moment',
+  'Maturing','Saturn return','New foundation','Growth momentum',
+  'Responsibilities','Vision clarifies','Transformation begins','Power gained',
+  'Jupiter return','Crisis & breakthrough','Saturn trine','Deep questioning',
+  'Profound change','Inner reckoning','Uranus opposition','Transformation complete',
+  'Chiron return','Wisdom gate','Priorities shift','Spiritual depth',
+  'Jupiter return','Maturity peak','Saturn opposition','Strong intuition',
+  'Legacy & harvest','New windows','Spiritual journey','Freedom & expansion',
+  'Horizon opens','Grand questioning','2nd Saturn return','Age of wisdom',
+  'Jupiter return','Fruits of experience','New horizons','Uranus square',
+  'Spiritual synthesis','Deep peace','Spiritual maturity','Bridge generations',
+  'Profound stillness','Universal connection','Grand cycle',
+]
+
+const TIMELINE_MILESTONES: Record<number, { labelTr: string; labelEn: string; gold?: boolean }> = {
+  0:  { labelTr: 'Doğum',              labelEn: 'Birth' },
+  7:  { labelTr: 'İlk Kriz',           labelEn: 'First Crisis' },
+  12: { labelTr: '1. Jüpiter Dönüşü',  labelEn: '1st Jupiter Return' },
+  14: { labelTr: 'Satürn Karşıtlığı',  labelEn: 'Saturn Opposition' },
+  19: { labelTr: 'Düğüm Dönüşü',       labelEn: 'Nodal Return' },
+  21: { labelTr: 'Uranüs Kare',         labelEn: 'Uranus Square' },
+  24: { labelTr: '2. Jüpiter Dönüşü',  labelEn: '2nd Jupiter Return' },
+  29: { labelTr: 'Satürn Dönüşü',      labelEn: 'Saturn Return',      gold: true },
+  36: { labelTr: '3. Jüpiter Dönüşü',  labelEn: '3rd Jupiter Return' },
+  42: { labelTr: 'Uranüs Karşıtlığı',  labelEn: 'Uranus Opposition',  gold: true },
+  44: { labelTr: 'Chiron Dönüşü',      labelEn: 'Chiron Return' },
+  48: { labelTr: '4. Jüpiter Dönüşü',  labelEn: '4th Jupiter Return' },
+  58: { labelTr: '2. Satürn Dönüşü',   labelEn: '2nd Saturn Return',  gold: true },
+  60: { labelTr: '5. Jüpiter Dönüşü',  labelEn: '5th Jupiter Return' },
+  63: { labelTr: 'Uranüs Kare',         labelEn: 'Uranus Square' },
+  70: { labelTr: 'Büyük Döngü',        labelEn: 'Grand Cycle' },
+}
+
+function AstrologyTimeline({ birthDate, lang }: { birthDate: string; lang: 'tr' | 'en' }) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const birth = birthDate ? new Date(birthDate) : null
+  const birthYear = birth && !isNaN(birth.getTime()) ? birth.getFullYear() : 0
+  const ageDays = birth && !isNaN(birth.getTime())
+    ? (Date.now() - birth.getTime()) / 86400000
+    : -1
+  const currentAge = ageDays >= 0 ? Math.min(Math.max(Math.floor(ageDays / 365.25), 0), 70) : -1
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el || currentAge < 0) return
+    const STEP = 84
+    el.scrollLeft = Math.max(0, currentAge * STEP - el.clientWidth / 2 + STEP / 2)
+  }, [currentAge])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
+      e.preventDefault()
+      el.scrollLeft += e.deltaY * 1.5
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [])
+
+  if (!birth || isNaN(birth.getTime()) || currentAge < 0) return null
+
+  return (
+    <div style={{ marginTop: 56 }}>
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        <div style={{ fontSize: 11, letterSpacing: '0.3em', color: clr.mutedDim, marginBottom: 10 }}>✦ ✦ ✦</div>
+        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(22px,3vw,36px)', fontWeight: 300, color: clr.star, marginBottom: 8 }}>
+          {lang === 'tr' ? '70 Yıllık Gezegen Yolculuğu' : '70-Year Planetary Journey'}
+        </h2>
+        <p style={{ fontSize: 13, color: clr.muted, maxWidth: 500, margin: '0 auto' }}>
+          {lang === 'tr'
+            ? 'Doğumundan itibaren önemli gezegen geçişleri ve yaşam dönemleri'
+            : 'Major planetary transits and life phases from your birth'}
+        </p>
+      </div>
+
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+        {([
+          { color: 'rgba(212,175,55,0.9)',  label: lang === 'tr' ? 'Büyük Dönüm Noktası' : 'Major Milestone' },
+          { color: clr.purpleGlow,          label: lang === 'tr' ? 'Gezegen Dönüşü'       : 'Planetary Cycle' },
+          { color: clr.purpleLight,         label: lang === 'tr' ? 'Şu Anki Yaş'          : 'Current Age' },
+        ] as { color: string; label: string }[]).map(({ color, label }) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, boxShadow: `0 0 6px ${color}` }} />
+            <span style={{ fontSize: 12, color: clr.muted }}>{label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Scrollable strip */}
+      <div style={{
+        background: 'rgba(7,4,26,0.7)',
+        border: `0.5px solid ${clr.border}`,
+        borderRadius: 18,
+        overflow: 'hidden',
+      }}>
+        <div
+          ref={scrollRef}
+          style={{
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            padding: '28px 32px 24px',
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'rgba(74,53,128,0.5) transparent',
+          }}
+        >
+          {/* Inner row */}
+          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start', width: 'max-content', position: 'relative' }}>
+
+            {/* Connecting line — sits at y=6 (center of largest 12px dot) */}
+            <div style={{
+              position: 'absolute',
+              top: 6,
+              left: 0, right: 0,
+              height: 1,
+              background: 'linear-gradient(90deg, transparent, rgba(74,53,128,0.35) 3%, rgba(74,53,128,0.35) 97%, transparent)',
+              pointerEvents: 'none',
+            }} />
+
+            {Array.from({ length: 71 }, (_, age) => {
+              const ms = TIMELINE_MILESTONES[age]
+              const isGold = !!ms?.gold
+              const isMilestone = !!ms
+              const isCurrent = age === currentAge
+              const year = birthYear + age
+              const theme = lang === 'tr' ? YEAR_THEMES_TR[age] : YEAR_THEMES_EN[age]
+
+              const dotSize = isGold ? 12 : isMilestone || isCurrent ? 9 : 6
+              const cardW  = isGold ? 110 : isMilestone ? 92 : 76
+
+              const dotColor = isGold
+                ? 'rgba(212,175,55,0.95)'
+                : isCurrent
+                  ? clr.purpleLight
+                  : isMilestone
+                    ? clr.purpleGlow
+                    : 'rgba(74,53,128,0.55)'
+
+              const cardBorder = isGold
+                ? 'rgba(212,175,55,0.45)'
+                : isCurrent
+                  ? 'rgba(196,181,247,0.7)'
+                  : isMilestone
+                    ? 'rgba(157,127,232,0.45)'
+                    : 'rgba(74,53,128,0.25)'
+
+              const cardBg = isGold
+                ? 'rgba(22,16,6,0.95)'
+                : isCurrent
+                  ? 'rgba(28,18,50,0.95)'
+                  : isMilestone
+                    ? 'rgba(18,12,36,0.9)'
+                    : 'rgba(10,6,22,0.8)'
+
+              const cardGlow = isGold
+                ? '0 0 18px rgba(212,175,55,0.12), 0 0 36px rgba(212,175,55,0.05)'
+                : isCurrent
+                  ? '0 0 16px rgba(196,181,247,0.12), 0 0 32px rgba(196,181,247,0.05)'
+                  : isMilestone
+                    ? '0 0 10px rgba(157,127,232,0.08)'
+                    : 'none'
+
+              return (
+                <div
+                  key={age}
+                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, gap: 0 }}
+                >
+                  {/* Dot on the timeline line */}
+                  <div style={{
+                    width: dotSize,
+                    height: dotSize,
+                    borderRadius: '50%',
+                    background: dotColor,
+                    boxShadow: isCurrent || isGold ? `0 0 8px ${dotColor}, 0 0 14px ${dotColor}55` : 'none',
+                    flexShrink: 0,
+                    zIndex: 1,
+                  }} />
+
+                  {/* Short vertical connector */}
+                  <div style={{
+                    width: 1,
+                    height: isMilestone || isCurrent ? 14 : 10,
+                    background: cardBorder,
+                    flexShrink: 0,
+                  }} />
+
+                  {/* Card */}
+                  <div style={{
+                    width: cardW,
+                    background: cardBg,
+                    border: `0.5px solid ${cardBorder}`,
+                    borderRadius: 10,
+                    padding: isGold ? '14px 10px 12px' : isMilestone ? '12px 8px 10px' : '10px 7px 9px',
+                    textAlign: 'center',
+                    backdropFilter: 'blur(8px)',
+                    boxShadow: cardGlow,
+                  }}>
+                    {/* Milestone label */}
+                    {isMilestone && (
+                      <div style={{
+                        fontSize: isGold ? 8 : 7,
+                        letterSpacing: '0.12em',
+                        color: isGold ? 'rgba(212,175,55,0.85)' : clr.purpleGlow,
+                        marginBottom: 6,
+                        lineHeight: 1.35,
+                        fontWeight: 500,
+                        textTransform: 'uppercase',
+                      }}>
+                        {lang === 'tr' ? ms.labelTr : ms.labelEn}
+                      </div>
+                    )}
+
+                    {/* Age number */}
+                    <div style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: isGold ? 30 : isMilestone ? 24 : 20,
+                      fontWeight: 300,
+                      lineHeight: 1,
+                      color: isGold
+                        ? 'rgba(212,175,55,0.95)'
+                        : isCurrent
+                          ? clr.purpleLight
+                          : clr.star,
+                      marginBottom: 3,
+                    }}>
+                      {age}
+                    </div>
+
+                    {/* Year */}
+                    <div style={{
+                      fontSize: 10,
+                      color: isCurrent ? clr.purpleGlow : clr.mutedDim,
+                      marginBottom: isGold || isMilestone ? 7 : 5,
+                      fontWeight: isCurrent ? 500 : 400,
+                    }}>
+                      {year}
+                    </div>
+
+                    {/* Theme text */}
+                    <div style={{
+                      fontSize: isGold ? 10 : 9,
+                      color: isGold
+                        ? 'rgba(212,175,55,0.7)'
+                        : isCurrent || isMilestone
+                          ? clr.muted
+                          : 'rgba(139,125,181,0.55)',
+                      lineHeight: 1.4,
+                    }}>
+                      {theme}
+                    </div>
+
+                    {/* "NOW" badge on current age */}
+                    {isCurrent && (
+                      <div style={{
+                        marginTop: 8,
+                        fontSize: 8,
+                        letterSpacing: '0.2em',
+                        color: clr.purpleLight,
+                        background: 'rgba(196,181,247,0.1)',
+                        border: '0.5px solid rgba(196,181,247,0.2)',
+                        borderRadius: 6,
+                        padding: '3px 6px',
+                      }}>
+                        {lang === 'tr' ? 'ŞU AN' : 'NOW'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Scroll hint */}
+      <p style={{ textAlign: 'center', fontSize: 11, color: clr.mutedDim, marginTop: 12, letterSpacing: '0.05em' }}>
+        {lang === 'tr' ? '← kaydır →' : '← scroll →'}
+      </p>
+    </div>
+  )
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+
 export default function DogumHaritasi() {
   const [lang, setLang] = useState<'tr' | 'en'>('tr')
   const [date, setDate] = useState('')
@@ -487,6 +805,9 @@ export default function DogumHaritasi() {
                   </table>
                 </div>
               </div>
+
+              {/* 70-Year Planetary Timeline */}
+              <AstrologyTimeline birthDate={date} lang={lang} />
             </div>
           )}
         </div>
