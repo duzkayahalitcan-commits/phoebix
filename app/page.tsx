@@ -1,20 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-
-const signs = [
-  { symbol: '♈', tr: 'Koç', en: 'Aries' },
-  { symbol: '♉', tr: 'Boğa', en: 'Taurus' },
-  { symbol: '♊', tr: 'İkizler', en: 'Gemini' },
-  { symbol: '♋', tr: 'Yengeç', en: 'Cancer' },
-  { symbol: '♌', tr: 'Aslan', en: 'Leo' },
-  { symbol: '♍', tr: 'Başak', en: 'Virgo' },
-  { symbol: '♎', tr: 'Terazi', en: 'Libra' },
-  { symbol: '♏', tr: 'Akrep', en: 'Scorpio' },
-  { symbol: '♐', tr: 'Yay', en: 'Sagittarius' },
-  { symbol: '♑', tr: 'Oğlak', en: 'Capricorn' },
-  { symbol: '♒', tr: 'Kova', en: 'Aquarius' },
-  { symbol: '♓', tr: 'Balık', en: 'Pisces' },
-]
+import Link from 'next/link'
+import { signs } from '@/lib/data'
 
 const dailyTexts: Record<string, string[]> = {
   tr: [
@@ -122,19 +109,22 @@ export default function Home() {
 
         {/* NAV */}
         <nav style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'18px 32px', borderBottom:`0.5px solid ${clr.border}`, backdropFilter:'blur(8px)' }}>
-          <div style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:22, letterSpacing:'0.25em', color:clr.purpleLight, fontWeight:400 }}>PHOEBIX</div>
+          <Link href="/" style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:22, letterSpacing:'0.25em', color:clr.purpleLight, fontWeight:400, textDecoration:'none' }}>PHOEBIX</Link>
           <div style={{ display:'flex', gap:28 }}>
-            {(lang==='tr' ? ['Burçlar','Harita','Uyumluluk','AI Yorum'] : ['Signs','Chart','Compatibility','AI Reading']).map(l => (
-              <span key={l} className="nl" style={{ fontSize:13, color:clr.muted, cursor:'pointer', transition:'color 0.2s' }}>{l}</span>
+            {(lang==='tr'
+              ? [['Burçlar','/burclar'],['Harita','/dogum-haritasi'],['Uyumluluk','/uyumluluk'],['AI Yorum','/ai-yorum']]
+              : [['Signs','/burclar'],['Chart','/dogum-haritasi'],['Compatibility','/uyumluluk'],['AI Reading','/ai-yorum']]
+            ).map(([l, href]) => (
+              <Link key={l} href={href} className="nl" style={{ fontSize:13, color:clr.muted, textDecoration:'none', transition:'color 0.2s' }}>{l}</Link>
             ))}
           </div>
           <div style={{ display:'flex', gap:10, alignItems:'center' }}>
             <button onClick={() => setLang(lang==='tr'?'en':'tr')} style={{ fontSize:11, padding:'5px 12px', border:`0.5px solid ${clr.border}`, borderRadius:20, color:clr.muted, background:'transparent', cursor:'pointer' }}>
               {lang==='tr' ? 'TR / EN' : 'EN / TR'}
             </button>
-            <button style={{ fontSize:12, padding:'6px 16px', border:`0.5px solid rgba(123,94,168,0.4)`, borderRadius:20, color:clr.purpleGlow, background:'transparent', cursor:'pointer' }}>
+            <Link href="/giris" style={{ fontSize:12, padding:'6px 16px', border:`0.5px solid rgba(123,94,168,0.4)`, borderRadius:20, color:clr.purpleGlow, background:'transparent', cursor:'pointer', textDecoration:'none' }}>
               {lang==='tr' ? 'Giriş' : 'Login'}
-            </button>
+            </Link>
           </div>
         </nav>
 
@@ -156,41 +146,41 @@ export default function Home() {
               : 'From your birth chart to daily horoscopes, AI-powered personal guidance — in the language of the stars.'}
           </p>
           <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
-            <button className="bp" style={{ padding:'13px 30px', background:clr.purple, border:'none', borderRadius:30, color:clr.star, fontSize:14, cursor:'pointer', transition:'all 0.2s', fontFamily:"'DM Sans', sans-serif" }}>
+            <Link href="/dogum-haritasi" className="bp" style={{ padding:'13px 30px', background:clr.purple, border:'none', borderRadius:30, color:clr.star, fontSize:14, cursor:'pointer', transition:'all 0.2s', fontFamily:"'DM Sans', sans-serif", textDecoration:'none', display:'inline-block' }}>
               {lang==='tr' ? 'Haritanı hesapla' : 'Calculate your chart'}
-            </button>
-            <button className="bs" style={{ padding:'13px 30px', background:'transparent', border:`0.5px solid ${clr.border}`, borderRadius:30, color:clr.muted, fontSize:14, cursor:'pointer', transition:'all 0.2s', fontFamily:"'DM Sans', sans-serif" }}>
+            </Link>
+            <Link href="/gunluk-yorum" className="bs" style={{ padding:'13px 30px', background:'transparent', border:`0.5px solid ${clr.border}`, borderRadius:30, color:clr.muted, fontSize:14, cursor:'pointer', transition:'all 0.2s', fontFamily:"'DM Sans', sans-serif", textDecoration:'none', display:'inline-block' }}>
               {lang==='tr' ? 'Günlük yorumum' : 'My daily reading'}
-            </button>
+            </Link>
           </div>
         </section>
 
         {/* SIGN STRIP */}
         <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'center', gap:8, padding:'20px 24px', borderBottom:`0.5px solid ${clr.border}` }}>
           {signs.map((s, i) => (
-            <button key={s.en} className="sp" onClick={() => setSelected(i)} style={{
+            <Link key={s.en} href={`/gunluk-yorum?sign=${s.slug}`} className="sp" onClick={() => setSelected(i)} style={{
               padding:'7px 15px', borderRadius:20, fontSize:13, cursor:'pointer', transition:'all 0.2s',
               border: selected===i ? `0.5px solid rgba(123,94,168,0.7)` : `0.5px solid ${clr.border}`,
               background: selected===i ? 'rgba(74,53,128,0.3)' : 'transparent',
               color: selected===i ? clr.purpleLight : clr.muted,
-              fontFamily:"'DM Sans', sans-serif",
+              fontFamily:"'DM Sans', sans-serif", textDecoration:'none', display:'inline-block',
             }}>
               {s.symbol} {lang==='tr' ? s.tr : s.en}
-            </button>
+            </Link>
           ))}
         </div>
 
         {/* FEATURES */}
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', borderBottom:`0.5px solid ${clr.border}` }}>
           {(lang==='tr'
-            ? [['☀','Günlük Yorum','Her gün yenilenen kişisel yorumlar'],['◎','Doğum Haritası','Gezegen pozisyonlarının derin analizi'],['♡','Uyumluluk','İki haritanın çok boyutlu analizi'],['✦','AI Astrologun','Sorularını yanıtlayan kişisel rehberin']]
-            : [['☀','Daily Reading','Personal readings renewed every day'],['◎','Birth Chart','Deep analysis of planetary positions'],['♡','Compatibility','Multi-dimensional chart analysis'],['✦','AI Astrologer','Your personal guide answering questions']]
-          ).map(([icon,title,desc]) => (
-            <div key={title as string} className="fc" style={{ padding:'28px 24px', borderRight:`0.5px solid ${clr.border}`, transition:'background 0.2s', cursor:'pointer' }}>
+            ? [['☀','Günlük Yorum','Her gün yenilenen kişisel yorumlar','/gunluk-yorum'],['◎','Doğum Haritası','Gezegen pozisyonlarının derin analizi','/dogum-haritasi'],['♡','Uyumluluk','İki haritanın çok boyutlu analizi','/uyumluluk'],['✦','AI Astrologun','Sorularını yanıtlayan kişisel rehberin','/ai-yorum']]
+            : [['☀','Daily Reading','Personal readings renewed every day','/gunluk-yorum'],['◎','Birth Chart','Deep analysis of planetary positions','/dogum-haritasi'],['♡','Compatibility','Multi-dimensional chart analysis','/uyumluluk'],['✦','AI Astrologer','Your personal guide answering questions','/ai-yorum']]
+          ).map(([icon,title,desc,href]) => (
+            <Link key={title as string} href={href as string} className="fc" style={{ padding:'28px 24px', borderRight:`0.5px solid ${clr.border}`, transition:'background 0.2s', cursor:'pointer', textDecoration:'none', display:'block' }}>
               <div style={{ width:36, height:36, borderRadius:8, background:clr.nebula, border:`0.5px solid ${clr.border}`, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:14, color:clr.purpleGlow, fontSize:16 }}>{icon}</div>
               <div style={{ fontSize:13, fontWeight:500, color:clr.purpleLight, marginBottom:8 }}>{title}</div>
               <div style={{ fontSize:12, color:clr.mutedDim, lineHeight:1.65 }}>{desc}</div>
-            </div>
+            </Link>
           ))}
         </div>
 
