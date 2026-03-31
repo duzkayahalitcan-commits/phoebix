@@ -74,20 +74,6 @@ export default function AiYorum() {
       <StarBg />
       <div style={{ position: 'relative', zIndex: 1, height: '100vh', display: 'flex', flexDirection: 'column', fontFamily: "'DM Sans', system-ui, sans-serif", color: clr.star }}>
 
-        {/* NAV */}
-        <nav style={{ flexShrink: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 32px', borderBottom: `0.5px solid ${clr.border}`, backdropFilter: 'blur(12px)', background: 'rgba(4,2,14,0.8)' }}>
-          <Link href="/" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, letterSpacing: '0.25em', color: clr.purpleLight, textDecoration: 'none' }}>PHOEBIX</Link>
-          <div style={{ display: 'flex', gap: 24 }}>
-            {([[lang==='tr'?'Burçlar':'Signs','/burclar'],[lang==='tr'?'Harita':'Chart','/dogum-haritasi'],[lang==='tr'?'Uyumluluk':'Compatibility','/uyumluluk'],[lang==='tr'?'AI Yorum':'AI Reading','/ai-yorum']] as [string,string][]).map(([l,h]) => (
-              <Link key={h} href={h} style={{ fontSize: 13, color: h==='/ai-yorum' ? clr.purpleLight : clr.muted, textDecoration: 'none' }}>{l}</Link>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={() => setLang(l => l === 'tr' ? 'en' : 'tr')} style={{ fontSize: 11, padding: '5px 12px', border: `0.5px solid ${clr.border}`, borderRadius: 20, color: clr.muted, background: 'transparent', cursor: 'pointer' }}>{lang === 'tr' ? 'TR / EN' : 'EN / TR'}</button>
-            <Link href="/giris" style={{ fontSize: 12, padding: '6px 16px', border: `0.5px solid rgba(123,94,168,0.4)`, borderRadius: 20, color: clr.purpleGlow, textDecoration: 'none' }}>{lang === 'tr' ? 'Giriş' : 'Login'}</Link>
-          </div>
-        </nav>
-
         {/* Chat header */}
         <div style={{ flexShrink: 0, padding: '16px 32px', borderBottom: `0.5px solid ${clr.border}`, background: 'rgba(15,9,32,0.5)', display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(123,94,168,0.3)', border: `1px solid ${clr.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>✦</div>

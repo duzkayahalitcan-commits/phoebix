@@ -107,27 +107,6 @@ export default function Home() {
 
       <div style={{ position:'relative', zIndex:1, fontFamily:"'DM Sans', system-ui, sans-serif", color:clr.star, minHeight:'100vh', background:'transparent' }}>
 
-        {/* NAV */}
-        <nav style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'18px 32px', borderBottom:`0.5px solid ${clr.border}`, backdropFilter:'blur(8px)' }}>
-          <Link href="/" style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:22, letterSpacing:'0.25em', color:clr.purpleLight, fontWeight:400, textDecoration:'none' }}>PHOEBIX</Link>
-          <div style={{ display:'flex', gap:28 }}>
-            {(lang==='tr'
-              ? [['Burçlar','/burclar'],['Harita','/dogum-haritasi'],['Uyumluluk','/uyumluluk'],['AI Yorum','/ai-yorum']]
-              : [['Signs','/burclar'],['Chart','/dogum-haritasi'],['Compatibility','/uyumluluk'],['AI Reading','/ai-yorum']]
-            ).map(([l, href]) => (
-              <Link key={l} href={href} className="nl" style={{ fontSize:13, color:clr.muted, textDecoration:'none', transition:'color 0.2s' }}>{l}</Link>
-            ))}
-          </div>
-          <div style={{ display:'flex', gap:10, alignItems:'center' }}>
-            <button onClick={() => setLang(lang==='tr'?'en':'tr')} style={{ fontSize:11, padding:'5px 12px', border:`0.5px solid ${clr.border}`, borderRadius:20, color:clr.muted, background:'transparent', cursor:'pointer' }}>
-              {lang==='tr' ? 'TR / EN' : 'EN / TR'}
-            </button>
-            <Link href="/giris" style={{ fontSize:12, padding:'6px 16px', border:`0.5px solid rgba(123,94,168,0.4)`, borderRadius:20, color:clr.purpleGlow, background:'transparent', cursor:'pointer', textDecoration:'none' }}>
-              {lang==='tr' ? 'Giriş' : 'Login'}
-            </Link>
-          </div>
-        </nav>
-
         {/* HERO */}
         <section className="fu" style={{ textAlign:'center', padding:'80px 24px 64px', borderBottom:`0.5px solid ${clr.border}` }}>
           <div style={{ display:'flex', gap:20, justifyContent:'center', marginBottom:28, color:'rgba(90,77,128,0.6)', letterSpacing:'0.5em', fontSize:11 }}>

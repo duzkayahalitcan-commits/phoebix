@@ -50,20 +50,6 @@ function DailyContent() {
     <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', fontFamily: "'DM Sans', system-ui, sans-serif", color: clr.star }}>
       <StarBg />
 
-      {/* NAV */}
-      <nav style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 32px', borderBottom: `0.5px solid ${clr.border}`, backdropFilter: 'blur(12px)', background: 'rgba(4,2,14,0.75)' }}>
-        <Link href="/" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, letterSpacing: '0.25em', color: clr.purpleLight, textDecoration: 'none' }}>PHOEBIX</Link>
-        <div style={{ display: 'flex', gap: 24 }}>
-          {[['Burçlar','/burclar'],['Harita','/dogum-haritasi'],['Uyumluluk','/uyumluluk'],['AI Yorum','/ai-yorum']].map(([l,h]) => (
-            <Link key={h} href={h} style={{ fontSize: 13, color: clr.muted, textDecoration: 'none' }}>{lang==='en' ? {'/burclar':'Signs','/dogum-haritasi':'Chart','/uyumluluk':'Compatibility','/ai-yorum':'AI Reading'}[h] : l}</Link>
-          ))}
-        </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button onClick={() => setLang(l => l === 'tr' ? 'en' : 'tr')} style={{ fontSize: 11, padding: '5px 12px', border: `0.5px solid ${clr.border}`, borderRadius: 20, color: clr.muted, background: 'transparent', cursor: 'pointer' }}>{lang === 'tr' ? 'TR / EN' : 'EN / TR'}</button>
-          <Link href="/giris" style={{ fontSize: 12, padding: '6px 16px', border: `0.5px solid rgba(123,94,168,0.4)`, borderRadius: 20, color: clr.purpleGlow, textDecoration: 'none' }}>{lang === 'tr' ? 'Giriş' : 'Login'}</Link>
-        </div>
-      </nav>
-
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '48px 24px 80px' }}>
 
         {/* Header */}

@@ -338,30 +338,7 @@ export default function DogumHaritasi() {
 
       <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', color: clr.star, fontFamily: "'DM Sans', system-ui, sans-serif" }}>
 
-        {/* NAV */}
-        <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 32px', borderBottom: `0.5px solid ${clr.border}`, backdropFilter: 'blur(8px)' }}>
-          <Link href="/" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, letterSpacing: '0.25em', color: clr.purpleLight, fontWeight: 400, textDecoration: 'none' }}>
-            PHOEBIX
-          </Link>
-          <div style={{ display: 'flex', gap: 28 }}>
-            {(lang === 'tr'
-              ? [['Burçlar', '#burclar'], ['Harita', '/dogum-haritasi'], ['Uyumluluk', '#uyumluluk'], ['AI Yorum', '#ai']]
-              : [['Signs', '#signs'], ['Chart', '/dogum-haritasi'], ['Compatibility', '#compatibility'], ['AI Reading', '#ai']]
-            ).map(([label, href]) => (
-              <Link key={label} href={href}
-                style={{ fontSize: 13, color: href === '/dogum-haritasi' ? clr.purpleLight : clr.muted, textDecoration: 'none', transition: 'color 0.2s' }}
-                className="nl">
-                {label}
-              </Link>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <button onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}
-              style={{ fontSize: 11, padding: '5px 12px', border: `0.5px solid ${clr.border}`, borderRadius: 20, color: clr.muted, background: 'transparent', cursor: 'pointer' }}>
-              {lang === 'tr' ? 'TR / EN' : 'EN / TR'}
-            </button>
-          </div>
-        </nav>
+
 
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '48px 24px 80px' }}>
 
