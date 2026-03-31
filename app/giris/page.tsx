@@ -101,7 +101,7 @@ export default function Giris() {
           </div>
 
           <button onClick={async () => {
-            await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } })
+            await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: 'https://www.phoebix.com/auth/callback' } })
           }} style={{
             width: '100%', padding: '12px 0', background: 'transparent', border: `0.5px solid ${clr.border}`,
             borderRadius: 12, color: clr.muted, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
