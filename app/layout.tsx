@@ -24,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="tr" suppressHydrationWarning>
       <body>
+        {/* SINGLE NAVBAR — do not add another NavbarWrapper anywhere */}
         <NavbarWrapper />
         {children}
       </body>
