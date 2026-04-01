@@ -10,6 +10,17 @@ interface NavbarProps {
   setLang: (l: 'tr' | 'en') => void
 }
 
+const clr = {
+  border: 'rgba(42,31,74,0.4)',
+  borderDim: 'rgba(42,31,74,0.6)',
+  purple: '#7b5ea8',
+  purpleLight: '#c4b5f7',
+  purpleGlow: '#9d7fe8',
+  purpleMid: 'rgba(74,53,128,0.3)',
+  muted: '#8b7db5',
+  bg: 'rgba(4,2,14,0.85)',
+}
+
 const NAV_LINKS = [
   { tr: 'Burçlar',   en: 'Signs',         href: '/burclar' },
   { tr: 'Harita',    en: 'Chart',         href: '/dogum-haritasi' },
@@ -25,15 +36,12 @@ export default function Navbar({ lang, setLang }: NavbarProps) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
-
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null)
     })
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
     })
-
     return () => subscription.unsubscribe()
   }, [])
 
@@ -54,49 +62,118 @@ export default function Navbar({ lang, setLang }: NavbarProps) {
   const avatarUrl = user?.user_metadata?.avatar_url as string | undefined
 
   return (
-    <nav className="relative z-50 flex justify-between items-center px-6 md:px-10 py-5 border-b border-purple-dim/40 backdrop-blur-sm">
-      <Link href="/" className="font-display text-2xl tracking-[0.2em] text-purple-light no-underline hover:opacity-80 transition-opacity">
+    <nav style={{
+      position: 'relative',
+      zIndex: 50,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '18px 40px',
+      borderBottom: `0.5px solid ${clr.border}`,
+      backdropFilter: 'blur(10px)',
+      background: clr.bg,
+      fontFamily: "'DM Sans', system-ui, sans-serif",
+    }}>
+
+      {/* Logo */}
+      <Link href="/" style={{
+        fontFamily: "'Cormorant Garamond', serif",
+        fontSize: 22,
+        letterSpacing: '0.22em',
+        color: clr.purpleLight,
+        textDecoration: 'none',
+        fontWeight: 400,
+      }}>
         PHOEBIX
       </Link>
 
-      <div className="hidden md:flex gap-8">
+      {/* Nav links (hidden on small screens via inline media trick — always rendered for SSR) */}
+      <div style={{ display: 'flex', gap: 28 }}>
         {NAV_LINKS.map(l => (
-          <Link key={l.href} href={l.href} className="text-sm text-muted hover:text-purple-light transition-colors no-underline">
+          <Link key={l.href} href={l.href} style={{
+            fontSize: 13,
+            color: clr.muted,
+            textDecoration: 'none',
+          }} className="nl">
             {lang === 'tr' ? l.tr : l.en}
           </Link>
         ))}
       </div>
 
-      <div className="flex gap-3 items-center">
+      {/* Right side controls */}
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
         <button
           onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}
-          className="text-xs px-3 py-1.5 border border-purple-dim/60 rounded-full text-muted hover:text-purple-light hover:border-purple-bright/40 transition-all"
+          style={{
+            fontSize: 11,
+            padding: '5px 12px',
+            border: `0.5px solid ${clr.borderDim}`,
+            borderRadius: 20,
+            color: clr.muted,
+            background: 'transparent',
+            cursor: 'pointer',
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+          }}
         >
           {lang === 'tr' ? 'TR / EN' : 'EN / TR'}
         </button>
 
         {user ? (
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full overflow-hidden border border-purple-dim/60 flex-shrink-0 flex items-center justify-center bg-purple-mid/30 text-purple-light text-xs font-medium">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              width: 28, height: 28,
+              borderRadius: '50%',
+              overflow: 'hidden',
+              border: `0.5px solid ${clr.borderDim}`,
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: clr.purpleMid,
+              color: clr.purpleLight,
+              fontSize: 12,
+              fontWeight: 500,
+            }}>
               {avatarUrl
-                ? <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                ? <img src={avatarUrl} alt={displayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} referrerPolicy="no-referrer" />
                 : displayName.charAt(0).toUpperCase()}
             </div>
-            <span className="hidden lg:block text-xs text-muted max-w-[120px] truncate">
+            <span style={{
+              fontSize: 12,
+              color: clr.muted,
+              maxWidth: 120,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
               {displayName}
             </span>
             <button
               onClick={handleLogout}
-              className="text-xs px-3 py-1.5 border border-purple-dim/60 rounded-full text-muted hover:text-purple-light hover:border-purple-bright/40 transition-all"
+              style={{
+                fontSize: 11,
+                padding: '5px 12px',
+                border: `0.5px solid ${clr.borderDim}`,
+                borderRadius: 20,
+                color: clr.muted,
+                background: 'transparent',
+                cursor: 'pointer',
+                fontFamily: "'DM Sans', system-ui, sans-serif",
+              }}
             >
               {lang === 'tr' ? 'Çıkış' : 'Logout'}
             </button>
           </div>
         ) : (
-          <Link
-            href="/giris"
-            className="text-xs px-4 py-1.5 border border-purple-dim/60 rounded-full text-purple-glow hover:bg-purple-dim/30 transition-all no-underline"
-          >
+          <Link href="/giris" style={{
+            fontSize: 12,
+            padding: '6px 16px',
+            border: `0.5px solid rgba(123,94,168,0.4)`,
+            borderRadius: 20,
+            color: clr.purpleGlow,
+            background: 'transparent',
+            textDecoration: 'none',
+          }}>
             {lang === 'tr' ? 'Giriş' : 'Login'}
           </Link>
         )}
